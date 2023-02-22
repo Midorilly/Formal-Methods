@@ -36,4 +36,17 @@ timestamp,sensor,action,event,pattern,detected_activities
 2008-11-19 22:59:53,Fridge,Fridge,ON,Pat_38,[u'GetSnack']
 ```
 The code employed for reworking and accomodating the dataset to our project aim can be found at ```src/pm.ipynb```.
-As we can observe above, some ```detected_activities``` contain more than one activity in a single string. We decided to modify the dataset so that each row would contain only one activity. To this end, we first formatted the dataset on Microsoft Excel by removing the square brackets and the punctuation. We then renamed the column ```detected_activities``` as ```activity_1``` and created two more columns, ```activity_2``` and ```activity_3```, since we observed that the ```detected_activities``` contained three activities at most; we proceeded to split in the respective columns the eventual detected activities containing more than one activity.
+As we can observe above, some ```detected_activities``` contain more than one activity in a single string. We decided to modify the dataset so that each row would contain only one activity. To this end, we first formatted the dataset on Microsoft Excel by removing the square brackets and the punctuation by employing a regular expression. We added three new columns to the dataset, ```activity_1```, ```activity_2``` and ```activity_3```, since we observed that ```detected_activities``` contained three activities at most; we then proceeded to split in the respective columns the eventual detected activities containing more than one activity. Below is the resulting new dataset.
+```
+timestamp,date,time,sensor,action,event,pattern,activity_1,activity_2,activity_3
+2008-11-19 22:47:46,2008-11-19,22:47:46,Frontdoor,Frontdoor,ON,Pat_15,LeaveHouse,,
+2008-11-19 22:49:20,2008-11-19,22:49:20,Frontdoor,Frontdoor,ON,Pat_15,LeaveHouse,,
+2008-11-19 22:49:24,2008-11-19,22:49:24,Frontdoor,Frontdoor,ON,Pat_15,LeaveHouse,,
+2008-11-19 22:50:18,2008-11-19,22:50:18,Frontdoor,Frontdoor,ON,Pat_15,LeaveHouse,,
+2008-11-19 22:51:02,2008-11-19,22:51:02,ToiletDoorDownstairs,ToiletDoorDownstairs,ON,Pat_158,UseToiletDownstairs,GetSnack,
+2008-11-19 22:51:04,2008-11-19,22:51:04,ToiletDoorDownstairs,ToiletDoorDownstairs,ON,Pat_158,UseToiletDownstairs,GetSnack,
+2008-11-19 22:51:49,2008-11-19,22:51:49,ToiletDoorDownstairs,ToiletDoorDownstairs,ON,Pat_158,UseToiletDownstairs,GetSnack,
+2008-11-19 22:52:17,2008-11-19,22:52:17,ToiletFlushDownstairs,ToiletFlushDownstairs,ON,Pat_158,UseToiletDownstairs,GetSnack,
+2008-11-19 22:59:12,2008-11-19,22:59:12,PlatesCupboard,PlatesCupboard,ON,Pat_158,UseToiletDownstairs,GetSnack,
+2008-11-19 22:59:53,2008-11-19,22:59:53,Fridge,Fridge,ON,Pat_38,GetSnack,,
+```
