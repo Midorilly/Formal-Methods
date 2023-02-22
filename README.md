@@ -4,7 +4,7 @@ DESCRIPTION OF PROCESS MINING
 [pm4py](https://pm4py.fit.fraunhofer.de/) is an open source Python library that supports process mining algorithms.
 
 ## Hybrid Activity Recognition System: an overview
-The employed dataset is the result of the Human Activity Recognition for Intelligent Environments [study](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8423051) of Gorka Azkune and Aitor Almeida, University of Deusto. This paper presents a scalable and hybrid AR system called *HARS*, Hybrid Activity Recognition System, designed to work in dense sensing-based monitoring scenarios, where activities are inferred by monitoring human-object interactions through the usage of multiple sensors. This system is based on four core concepts
+The employed dataset is the result of the Human Activity Recognition for Intelligent Environments [study](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8423051) of Gorka Azkune and Aitor Almeida, University of Deusto. The paper presents a scalable and hybrid AR system called *HARS*, Hybrid Activity Recognition System, designed to work in dense sensing-based monitoring scenarios, where activities are inferred by monitoring human-object interactions through the usage of multiple sensors. This system is based on four core concepts
  - Sensor Activation: a sensor is activated when it changes its state from *no-interaction* state to *interaction* state and vice-versa; 
  - Action: actions constituite the primitives of activities; they are detected by sensors, thus sensor activations can be mapped to actions;
  - Activity: activities are a sequence of action executed with a common purpose in a specific location, at a given time and with a given duration.
@@ -58,7 +58,7 @@ Since not every row contains more than one activity, their ```activity_2``` and 
 ```
 df = df.replace(np.nan, 'e')
 ```
-Now that ```activity_1```, ```activity_2``` and ```activity_3``` fields contain strings only, we can further split the activities. We create a new dataframe with a different header: every row can have one corresponding activity only, ```activity```; additionally, we split ```timeframe``` in two more fields, ```date``` and ```time```, too.
+Now that ```activity_1```, ```activity_2``` and ```activity_3``` fields contain strings only, we can further split the activities. We create a new dataframe with a different header: every row can have one corresponding ```activity``` only; additionally, we split ```timeframe``` in two more fields, ```date``` and ```time```, too.
 ```
 split_df.to_csv('out.csv', header = ['timestamp', 'date', 'time', 'sensor', 'action', 'event', 'pattern', 'activity'])
 ```
