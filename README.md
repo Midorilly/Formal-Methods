@@ -1,7 +1,7 @@
 # Process Mining with pm4py
 DESCRIPTION OF PROCESS MINING
 
-pm4py is an open source Python library that supports process mining algorithms.
+[pm4py](https://pm4py.fit.fraunhofer.de/) is an open source Python library that supports process mining algorithms.
 
 ## Hybrid Activity Recognition System: an overview
 The employed dataset is the result of the Human Activity Recognition for Intelligent Environments [study](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8423051) of Gorka Azkune and Aitor Almeida, University of Deusto. This paper presents a scalable and hybrid AR system called *HARS*, Hybrid Activity Recognition System, designed to work in dense sensing-based monitoring scenarios, where activities are inferred by monitoring human-object interactions through the usage of multiple sensors. This system is based on four core concepts
@@ -21,8 +21,7 @@ HARS is divided into two main modules:
  - *PMM*: Pattern-Model Matching algorithm, its purpose is to discover the activities for a given action pattern and a set of EAMs. PMM, taking in input the labelled dataset of actions previously discovered by APD and a set of EAMs for a given user, aims at matching the best set of EAMs to a certain action pattern, which may be composed by several activities, one activity or 'None', a lable used for idle or unknown activities. The algorithm returns a set of detected activities for each action pattern.
 
 ## Dataset manipulation
-Our [initial dataset](https://github.com/aitoralmeida/c4a_activity_recognition/blob/master/experiments/kasterenC_dataset/pm_output.csv) inclueds six features: ```timestamp```, ```sensor```, ```action```, ```event```, ```pattern```, ```detected_activities```. It contains 22,700 observations gathered in the timeframe going from November 19th to December 8th, 2008. The code below shows the first ten rows of our dataset. As we can observe, some ```detected_activities``` fields contain more than one activity
-
+Our [initial dataset](https://github.com/aitoralmeida/c4a_activity_recognition/blob/master/experiments/kasterenC_dataset/pm_output.csv) inclueds six features: ```timestamp```, ```sensor```, ```action```, ```event```, ```pattern```, ```detected_activities```. It contains 22,700 observations gathered in the timeframe going from November 19th to December 8th, 2008. The frame below shows the first ten rows of our dataset. 
 ```
 timestamp,sensor,action,event,pattern,detected_activities
 2008-11-19 22:47:46,Frontdoor,Frontdoor,ON,Pat_15,[u'LeaveHouse']
@@ -36,3 +35,5 @@ timestamp,sensor,action,event,pattern,detected_activities
 2008-11-19 22:59:12,PlatesCupboard,PlatesCupboard,ON,Pat_158,"[u'UseToiletDownstairs', u'GetSnack']"
 2008-11-19 22:59:53,Fridge,Fridge,ON,Pat_38,[u'GetSnack']
 ```
+The code employed for reworking and accomodating the dataset to our project aim can be found at ```src/pm.ipynb```.
+As we can observe above, some ```detected_activities``` contain more than one activity in a single string. We decided to modify the dataset so that each row would contain only one activity. To this end, we first formatted the dataset on Microsoft Excel by removing the square brackets and the punctuation. We then renamed the column ```detected_activities``` as ```activity_1``` and created two more columns, ```activity_2``` and ```activity_3```, since we observed that the ```detected_activities``` contained three activities at most; we proceeded to split in the respective columns the eventual detected activities containing more than one activity.
