@@ -58,4 +58,11 @@ Since not every row contains more than one activity, their ```activity_2``` and 
 ```
 df = df.replace(np.nan, 'e')
 ```
+Now that ```activity_1```, ```activity_2``` and ```activity_3``` fields contain strings only, we can further split the activities. We create a new dataframe with a different header: every row can have one corresponding activity only, ```activity```; additionally, we split ```timeframe``` in two more fields, ```date``` and ```time```, too.
+```
+split_df.to_csv('out.csv', header = ['timestamp', 'date', 'time', 'sensor', 'action', 'event', 'pattern', 'activity'])
+```
+
+
+- ```activity_3 != 'e'``` means that the pattern consists of three activities; we duplicate the corresponding row two times, one containing the value of 
 
