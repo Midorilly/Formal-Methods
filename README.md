@@ -35,8 +35,7 @@ timestamp,sensor,action,event,pattern,detected_activities
 2008-11-19 22:59:12,PlatesCupboard,PlatesCupboard,ON,Pat_158,"[u'UseToiletDownstairs', u'GetSnack']"
 2008-11-19 22:59:53,Fridge,Fridge,ON,Pat_38,[u'GetSnack']
 ```
-The code employed for reworking and accomodating the dataset to our project aim can be found at ```src/pm.ipynb```.
-As we can observe above, some ```detected_activities``` contain more than one activity in a single string. We decided to modify the dataset so that each row would contain only one activity. To this end, we first formatted the dataset on Microsoft Excel by removing the square brackets and the punctuation by employing a regular expression. We added three new columns to the dataset, ```activity_1```, ```activity_2``` and ```activity_3```, since we observed that ```detected_activities``` contained three activities at most; we then proceeded to split in the respective columns the eventual detected activities containing more than one activity. Below is the resulting new dataset.
+As we can observe above, some ```detected_activities``` contain more than one activity in a single string. We decided to modify the dataset so that each row would contain only one activity. To this end, we first formatted the dataset on Microsoft Excel by removing the square brackets and the punctuation by employing a regular expression. We added three new columns to the dataset, ```activity_1```, ```activity_2``` and ```activity_3```, since we observed that ```detected_activities``` contained three activities at most; we then proceeded to split in the respective columns the eventual detected activities containing more than one activity. Below is the resulting new dataset, ```dataset/split_pm_output.csv```.
 ```
 timestamp,date,time,sensor,action,event,pattern,activity_1,activity_2,activity_3
 2008-11-19 22:47:46,2008-11-19,22:47:46,Frontdoor,Frontdoor,ON,Pat_15,LeaveHouse,,
@@ -50,3 +49,13 @@ timestamp,date,time,sensor,action,event,pattern,activity_1,activity_2,activity_3
 2008-11-19 22:59:12,2008-11-19,22:59:12,PlatesCupboard,PlatesCupboard,ON,Pat_158,UseToiletDownstairs,GetSnack,
 2008-11-19 22:59:53,2008-11-19,22:59:53,Fridge,Fridge,ON,Pat_38,GetSnack,,
 ```
+To further simplify the dataset we decided to keep only one activity per row. The code written for these accomodations can be found at ```src/pm.ipynb```. First and foremost, we read the ```split_pm_output.csv``` using the [pandas](https://pandas.pydata.org/) library. 
+```
+df = pd.read_csv("split_pm_output.csv", parse_dates=["timestamp"])
+```
+Since not every row contains more than one activity, their ```activity_2``` and ```activity_3``` fields were automatically set to **NaN** by Microsoft Excel. In order to work with strings only, NaN values have been replaced with the character ```e```, indicating that the corresponding field is empty. 
+
+```
+df = df.replace(np.nan, 'e')
+```
+
