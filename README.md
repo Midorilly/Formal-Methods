@@ -1,5 +1,5 @@
 # Process Mining with Pm4Py
-[Process mining] is a set of techniques and tools to extract non-trivial and useful information from event logs. Specifically, information about processes is recorded by information systems, which include business processes, enterprise systems, automation and control systems, medical systems, daily activities, IoT devices, and social networks, among others.
+Process mining is a set of techniques and tools to extract non-trivial and useful information from event logs. Specifically, information about processes is recorded by information systems, which include business processes, enterprise systems, automation and control systems, medical systems, daily activities, IoT devices, and social networks, among others.
 
 One of the main aspects of process mining is control-flow discovery: given an event log containing a set of traces, it involves automatically discovering and visualising the actual process performed by constructing a suitable process model. A process model describes the behaviour seen in the log; a good example is a Petri net. 
 Algorithms such as the α-algorithm construct a process model based on identifying characteristic patterns in the event log; an example of a pattern is a situation in which one activity always follows another).
