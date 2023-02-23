@@ -37,7 +37,7 @@ timestamp,sensor,action,event,pattern,detected_activities
 2008-11-19 22:59:12,PlatesCupboard,PlatesCupboard,ON,Pat_158,"[u'UseToiletDownstairs', u'GetSnack']"
 2008-11-19 22:59:53,Fridge,Fridge,ON,Pat_38,[u'GetSnack']
 ```
-As we can observe above, some ```detected_activities``` contain more than one activity in a single string. We decided to modify the dataset so that each row would contain only one activity. To this end, we first formatted the dataset on Microsoft Excel by removing the square brackets and the punctuation by employing a regular expression. We added three new columns to the dataset, ```activity_1```, ```activity_2``` and ```activity_3```, since we observed that ```detected_activities``` contained three activities at most; we then proceeded to split in the respective columns the eventual detected activities containing more than one activity. Below is the resulting new dataset, ```dataset/split_pm_output.csv```.
+As we can observe above, some ```detected_activities``` contain more than one activity in a single string. We decided to modify the dataset so that each row would contain only one activity. To this end, we first formatted the dataset on Microsoft Excel by removing the square brackets and the punctuation by employing a regular expression. We added three new columns to the dataset, ```activity_1```, ```activity_2``` and ```activity_3```, since we observed that ```detected_activities``` contained three activities at most; we then proceeded to split in the respective columns the eventual detected activities containing more than one activity. Below is the resulting new dataset, ```dataset/split_kasteren.csv```.
 ```
 timestamp,date,time,sensor,action,event,pattern,activity_1,activity_2,activity_3
 2008-11-19 22:47:46,2008-11-19,22:47:46,Frontdoor,Frontdoor,ON,Pat_15,LeaveHouse,,
@@ -51,7 +51,7 @@ timestamp,date,time,sensor,action,event,pattern,activity_1,activity_2,activity_3
 2008-11-19 22:59:12,2008-11-19,22:59:12,PlatesCupboard,PlatesCupboard,ON,Pat_158,UseToiletDownstairs,GetSnack,
 2008-11-19 22:59:53,2008-11-19,22:59:53,Fridge,Fridge,ON,Pat_38,GetSnack,,
 ```
-To further simplify the dataset we decided to keep only one activity per row. The code written for these accomodations can be found at ```src/pm.ipynb```. First and foremost, we read the ```split_pm_output.csv``` using the [pandas](https://pandas.pydata.org/) library. 
+To further simplify the dataset we decided to keep only one activity per row. The code written for these accomodations can be found at ```src/pm.ipynb```. First and foremost, we read the ```split_kasteren.csv``` using the [pandas](https://pandas.pydata.org/) library. 
 ```
 df = pd.read_csv("split_pm_output.csv", parse_dates=["timestamp"])
 ```
@@ -62,11 +62,25 @@ df = df.replace(np.nan, 'e')
 ```
 Now that ```activity_1```, ```activity_2``` and ```activity_3``` fields contain strings only, we can further split the activities. We create a new dataframe with a different header: every row can have one corresponding ```activity``` only; additionally, we split ```timeframe``` in two more fields, ```date``` and ```time```, too.
 ```
-split_df.to_csv('out.csv', header = ['timestamp', 'date', 'time', 'sensor', 'action', 'event', 'pattern', 'activity'])
+split_df.to_csv('split_kasteren_activity.csv', header = ['timestamp', 'date', 'time', 'sensor', 'action', 'event', 'pattern', 'activity'])
 ```
+The splitting algorithm is the following: 
+- if a row in the initial dataframe ```df``` has non-empty ```activity_3```, we replicate it thrice so that the ```activity``` field of the new dataframe ```split_df``` contains the values of ```activity_1```, ```activity_2``` and ```activity_3``` respectively;
+- if a row in ```df``` has non-empty ```activity_2``` and empty ```activity_3```, we add it to  ```split_df``` twice: the ```activity``` field contains the values of ```activity_1``` and ```activity_2```; similarly;
+- finally, if a ```df``` row has non-empty ```activity_1``` field only, it is straightaway duplicated in ```split_df```.
 
-
-- ```activity_3 != 'e'``` means that the pattern consists of three activities; we duplicate the corresponding row two times, one containing the value of 
+We write this new dataframe to ```dataset/split_kasteren_activity.csv```. Below is an example of how a row having three activities has been split.
+```
+timestamp,date,time,sensor,action,event,pattern,activity_1,activity_2,activity_3
+2008-12-07 01:03:30,2008-12-07,01:03:30,ToiletDoorDownstairs,ToiletDoorDownstairs,ON,Pat_154,Relax,UseToiletDownstairs,LeaveHouse
+```
+```
+timestamp,date,time,sensor,action,event,pattern,activity
+2008-12-07 01:03:30,2008-12-07,01:03:30,ToiletDoorDownstairs,ToiletDoorDownstairs,ON,Pat_154,Relax
+2008-12-07 01:03:30,2008-12-07,01:03:30,ToiletDoorDownstairs,ToiletDoorDownstairs,ON,Pat_154,UseToiletDownstairs
+2008-12-07 01:03:30,2008-12-07,01:03:30,ToiletDoorDownstairs,ToiletDoorDownstairs,ON,Pat_154,LeaveHouse
+```
+ Our dataset is now ready for one last step
 
 ## Petri Nets Discovering
 Petri nets are a graphical representation of a system that models the flow of data, events, or resources between different components or entities. Since the goal of this case study is detecting the weekly routine of a subject, Petri nets play a fundamental role to achieve it. 
