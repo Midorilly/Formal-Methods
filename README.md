@@ -41,7 +41,7 @@ timestamp,sensor,action,event,pattern,detected_activities
 2008-11-19 22:59:12,PlatesCupboard,PlatesCupboard,ON,Pat_158,"[u'UseToiletDownstairs', u'GetSnack']"
 2008-11-19 22:59:53,Fridge,Fridge,ON,Pat_38,[u'GetSnack']
 ```
-As we can observe above, some ```detected_activities``` contain more than one activity in a single string. We decided to modify the dataset so that each row would contain only one activity. To this end, we first formatted the dataset on Microsoft Excel by removing the square brackets and the punctuation by employing a regular expression. We added three new columns to the dataset, ```activity_1```, ```activity_2``` and ```activity_3```, since we observed that ```detected_activities``` contained three activities at most; we then proceeded to split in the respective columns the eventual detected activities containing more than one activity. Below is the resulting new dataset, ```dataset/split_pm_output.csv```.
+As we can observe above, some ```detected_activities``` contain more than one activity in a single string. We decided to modify the dataset so that each row would contain only one activity. To this end, we first formatted the dataset on Microsoft Excel by removing the square brackets and the punctuation by employing a regular expression. We added three new columns to the dataset, ```activity_1```, ```activity_2``` and ```activity_3```, since we observed that ```detected_activities``` contained three activities at most; we then proceeded to split in the respective columns the eventual detected activities containing more than one activity. Below is the resulting new dataset, ```dataset/split_kasteren.csv```.
 ```
 timestamp,date,time,sensor,action,event,pattern,activity_1,activity_2,activity_3
 2008-11-19 22:47:46,2008-11-19,22:47:46,Frontdoor,Frontdoor,ON,Pat_15,LeaveHouse,,
@@ -55,7 +55,7 @@ timestamp,date,time,sensor,action,event,pattern,activity_1,activity_2,activity_3
 2008-11-19 22:59:12,2008-11-19,22:59:12,PlatesCupboard,PlatesCupboard,ON,Pat_158,UseToiletDownstairs,GetSnack,
 2008-11-19 22:59:53,2008-11-19,22:59:53,Fridge,Fridge,ON,Pat_38,GetSnack,,
 ```
-To further simplify the dataset we decided to keep only one activity per row. The code written for these accomodations can be found at ```src/pm.ipynb```. First and foremost, we read the ```split_pm_output.csv``` using the [pandas](https://pandas.pydata.org/) library. 
+To further simplify the dataset we decided to keep only one activity per row. The code written for these accomodations can be found at ```src/pm.ipynb```. First and foremost, we read the ```split_kasteren.csv``` using the [pandas](https://pandas.pydata.org/) library. 
 ```
 df = pd.read_csv("split_pm_output.csv", parse_dates=["timestamp"])
 ```
@@ -71,19 +71,50 @@ split_df.to_csv('split_kasteren_activity.csv', header = ['timestamp', 'date', 't
 The splitting algorithm is the following: 
 - if a row in the initial dataframe ```df``` has non-empty ```activity_3```, we replicate it thrice so that the ```activity``` field of the new dataframe ```split_df``` contains the values of ```activity_1```, ```activity_2``` and ```activity_3``` respectively;
 - if a row in ```df``` has non-empty ```activity_2``` and empty ```activity_3```, we add it to  ```split_df``` twice: the ```activity``` field contains the values of ```activity_1``` and ```activity_2```; similarly;
-- finally, if a ```df``` row has non-empty ```activity_1``` field only, it is straightaway duplicated in ```split_df```. 
+- finally, if a ```df``` row has non-empty ```activity_1``` field only, it is straightaway duplicated in ```split_df```.
 
-Below is an example of how a row having three activities has been split.
+We write this new dataframe to ```dataset/split_kasteren_activity.csv```. Below is an example of how a row having three activities has been split.
+
+**df:**
 ```
 timestamp,date,time,sensor,action,event,pattern,activity_1,activity_2,activity_3
 2008-12-07 01:03:30,2008-12-07,01:03:30,ToiletDoorDownstairs,ToiletDoorDownstairs,ON,Pat_154,Relax,UseToiletDownstairs,LeaveHouse
 ```
+
+**split_df:**
 ```
 timestamp,date,time,sensor,action,event,pattern,activity
 2008-12-07 01:03:30,2008-12-07,01:03:30,ToiletDoorDownstairs,ToiletDoorDownstairs,ON,Pat_154,Relax
 2008-12-07 01:03:30,2008-12-07,01:03:30,ToiletDoorDownstairs,ToiletDoorDownstairs,ON,Pat_154,UseToiletDownstairs
 2008-12-07 01:03:30,2008-12-07,01:03:30,ToiletDoorDownstairs,ToiletDoorDownstairs,ON,Pat_154,LeaveHouse
 ```
+
+Our dataset is now ready for one last step; since we aim to model a Petri Network for each day of the week, we extract from the entire dataset seven subsets, one for each day of the week. As we mentioned earlier, these data have been gathered between November 19th and December 8th, 2008, thus we have
+- Mondays: 24-11, 01-12, 08-12
+- Tuesdays: 25-11, 02-12
+- Wednesdays: 19-11, 26-11, 03-12
+- Thurdays: 20-11, 27-11, 04-12
+- Fridays: 21-11, 28-11, 05-12
+- Saturdays: 22-11, 29-11, 06-12
+- Sundays: 23-11, 30-11, 07-12
+
+We established that the daily routine starts at 7:00:00 of the day in question and ends at 6:59:59 of the next day. For example, here is how we extract the user's routine.
+```
+monday = pd.DataFrame(columns = ['timestamp', 'sensor', 'action', 'event', 'pattern', 'activity'], index=range(0,3695))
+m24 = pd.Timestamp('2008-11-24 07:00:00')
+m25 = pd.Timestamp('2008-11-25 06:59:59')
+m01 = pd.Timestamp('2008-12-01 07:00:00')
+m02 = pd.Timestamp('2008-12-02 06:59:59')
+m08 = pd.Timestamp('2008-12-08 07:00:00')
+m09 = pd.Timestamp('2008-12-09 06:59:59')
+m = 0
+for i in range(len(dataset)):
+    if (dataset.loc[i, 'timestamp'] >= m24 and dataset.loc[i, 'timestamp'] <= m25) or (dataset.loc[i, 'timestamp'] >= m01 and dataset.loc[i, 'timestamp'] <= m02) or (dataset.loc[i, 'timestamp'] >= m08 and dataset.loc[i, 'timestamp'] <= m09):
+        monday.iloc[m] = pd.Series({'timestamp': dataset.loc[i, 'timestamp'], 'sensor': dataset.loc[i, 'sensor'], 'action': dataset.loc[i, 'action'], 'event': dataset.loc[i, 'event'], 'pattern': dataset.loc[i, 'pattern'], 'activity': dataset.loc[i, 'activity']})
+        m += 1
+```
+By observing the code we understand that the *Mondays routine* starts on Monday 24th at 07:00:00 and ends on Tuesday 25th at 06:59:59.
+
 
 
 ## Petri Nets
