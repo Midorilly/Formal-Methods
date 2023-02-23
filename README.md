@@ -1,13 +1,9 @@
 # Process Mining with Pm4Py
 Process mining is a set of techniques and tools to extract non-trivial and useful information from event logs. Specifically, information about processes is recorded by information systems, which include business processes, enterprise systems, automation and control systems, medical systems, daily activities, IoT devices, and social networks, among others.
-One of the main aspects of process mining is control-flow discovery: given an event log containing a set of traces, it involves automatically discovering and visualising the actual process performed by constructing a suitable process model. A process model describes the behaviour seen in the log; a good example is a Petri net. 
-Algorithms such as the α-algorithm construct a process model based on identifying characteristic patterns in the event log; an example of a pattern is a situation in which one activity always follows another).
+One of the main aspects of process mining is control-flow discovery: given an event log containing a set of traces, it involves automatically discovering and visualising the actual process performed by constructing a suitable process model. Hence, a good example of a process model are Petri nets. 
+Algorithms such as the α-algorithm construct a process model based on identifying characteristic patterns in the event log; an example of pattern is a situation in which one activity always follows another).
 
-In this case study, this goal has been achieved using [pm4py](https://pm4py.fit.fraunhofer.de/), an open-source Python library for process mining. PM4Py involves tools used for data preparation, process discovery, conformance checking, as well as performance analysis.
-It can be installed using pip, a package installer for Python:
-```
-pip install pm4py
-```
+This case study aims to detect the weekly routine of a traked subject based on the event log obtained by sesnors. Specifically, this goal has been achieved using [pm4py](https://pm4py.fit.fraunhofer.de/), an open-source Python library for process mining. PM4Py involves tools used for data preparation, process discovery, conformance checking, as well as performance analysis.
 
 ## Hybrid Activity Recognition System: an overview
 The employed dataset is the result of the Human Activity Recognition for Intelligent Environments [study](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8423051) of Gorka Azkune and Aitor Almeida, University of Deusto. The paper presents a scalable and hybrid AR system called *HARS*, Hybrid Activity Recognition System, designed to work in dense sensing-based monitoring scenarios, where activities are inferred by monitoring human-object interactions through the usage of multiple sensors. This system is based on four core concepts
@@ -66,24 +62,46 @@ df = df.replace(np.nan, 'e')
 ```
 Now that ```activity_1```, ```activity_2``` and ```activity_3``` fields contain strings only, we can further split the activities. We create a new dataframe with a different header: every row can have one corresponding ```activity``` only; additionally, we split ```timeframe``` in two more fields, ```date``` and ```time```, too.
 ```
-split_df.to_csv('split_kasteren_activity.csv', header = ['timestamp', 'date', 'time', 'sensor', 'action', 'event', 'pattern', 'activity'])
-```
-The splitting algorithm is the following: 
-- if a row in the initial dataframe ```df``` has non-empty ```activity_3```, we replicate it thrice so that the ```activity``` field of the new dataframe ```split_df``` contains the values of ```activity_1```, ```activity_2``` and ```activity_3``` respectively;
-- if a row in ```df``` has non-empty ```activity_2``` and empty ```activity_3```, we add it to  ```split_df``` twice: the ```activity``` field contains the values of ```activity_1``` and ```activity_2```; similarly;
-- finally, if a ```df``` row has non-empty ```activity_1``` field only, it is straightaway duplicated in ```split_df```. 
-
-Below is an example of how a row having three activities has been split.
-```
-timestamp,date,time,sensor,action,event,pattern,activity_1,activity_2,activity_3
-2008-12-07 01:03:30,2008-12-07,01:03:30,ToiletDoorDownstairs,ToiletDoorDownstairs,ON,Pat_154,Relax,UseToiletDownstairs,LeaveHouse
-```
-```
-timestamp,date,time,sensor,action,event,pattern,activity
-2008-12-07 01:03:30,2008-12-07,01:03:30,ToiletDoorDownstairs,ToiletDoorDownstairs,ON,Pat_154,Relax
-2008-12-07 01:03:30,2008-12-07,01:03:30,ToiletDoorDownstairs,ToiletDoorDownstairs,ON,Pat_154,UseToiletDownstairs
-2008-12-07 01:03:30,2008-12-07,01:03:30,ToiletDoorDownstairs,ToiletDoorDownstairs,ON,Pat_154,LeaveHouse
+split_df.to_csv('out.csv', header = ['timestamp', 'date', 'time', 'sensor', 'action', 'event', 'pattern', 'activity'])
 ```
 
 
-## Petri Nets
+- ```activity_3 != 'e'``` means that the pattern consists of three activities; we duplicate the corresponding row two times, one containing the value of 
+
+## Petri Nets Discovering
+Petri nets are a graphical representation of a system that models the flow of data, events, or resources between different components or entities. Since the goal of this case study is detecting the weekly routine of a subject, Petri nets play a fundamental role to achieve it. 
+Specifically, we expect seven Petri nets, one for each day of the week.
+
+We can distinguish between two main phases:
+    - training phase, during which we obtain seven Petri nets, each based on the respective train dataset;
+    - testing phase, during which we check the predictive performances of the previously obtained Petri nets.
+
+### Training Phase
+In this phase, the pre-processed data is used to train Petri nets. This involves using algorithms to learn the structure and parameters of the model based on the observed behavior of the system.
+
+In other words, for each day of the week, the respective dataset needs to be read into a pandas dataframe, which is an essential step in order to use the methods provided by PM4Py library. The following is a general exmaple of code.
+```
+day_df = pd.read_csv("day.csv", parse_dates=["timestamp"])
+
+daydf = pd.DataFrame(monday_df, columns=['id', 'timestamp', 'date', 'time', 'sensor', 'action', 'event', 'pattern', 'activity'])
+
+day_df = pm4py.format_dataframe(daydf, case_id='timestamp', activity_key='activity', timestamp_key='timestamp')
+```
+
+Then, this dataframe needs to be converted into an event log, which is then used by the alpha miner algorithm to discover the Petri net.
+```
+event_log = pm4py.convert_to_event_log(monday_df)
+
+net, initial_marking, final_marking = pm4py.discover_petri_net_alpha(event_log)
+
+```
+
+### Testing Phase
+The testing phased involves to test the obtained Petri nets on the respective testing dataset in order to evalute their predictive performance. Hence, this involves using the model to make predictions about the behavior of the system based on new data, and comparing the predicted behavior to the actual behavior observed in the new data.
+
+## Results
+
+
+## Conclusions
+
+
