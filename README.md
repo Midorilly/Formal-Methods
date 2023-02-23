@@ -1,10 +1,9 @@
 # Process Mining with Pm4Py
 Process mining is a set of techniques and tools to extract non-trivial and useful information from event logs. Specifically, information about processes is recorded by information systems, which include business processes, enterprise systems, automation and control systems, medical systems, daily activities, IoT devices, and social networks, among others.
-
 One of the main aspects of process mining is control-flow discovery: given an event log containing a set of traces, it involves automatically discovering and visualising the actual process performed by constructing a suitable process model. A process model describes the behaviour seen in the log; a good example is a Petri net. 
 Algorithms such as the α-algorithm construct a process model based on identifying characteristic patterns in the event log; an example of a pattern is a situation in which one activity always follows another).
 
-[pm4py](https://pm4py.fit.fraunhofer.de/) is an open source Python library for process mining. PM4Py involves tools used for data preparation, process discovery, conformance checking, as well as performance analysis.
+In this case study, this goal has been achieved using [pm4py](https://pm4py.fit.fraunhofer.de/), an open-source Python library for process mining. PM4Py involves tools used for data preparation, process discovery, conformance checking, as well as performance analysis.
 It can be installed using pip, a package installer for Python:
 ```
 pip install pm4py
@@ -74,6 +73,3 @@ split_df.to_csv('out.csv', header = ['timestamp', 'date', 'time', 'sensor', 'act
 - ```activity_3 != 'e'``` means that the pattern consists of three activities; we duplicate the corresponding row two times, one containing the value of 
 
 ## Petri Nets
-The employed dataset is the result of the Human Activity Recognition for Intelligent Environments [study](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8423051) of Gorka Azkune and Aitor Almeida, University of Deusto. The paper presents a scalable and hybrid AR system called *HARS*, Hybrid Activity Recognition System, designed to work in dense sensing-based monitoring scenarios, where activities are inferred by monitoring human-object interactions through the usage of multiple sensors. This system is based on four core concepts
- - Sensor Activation: a sensor is activated when it changes its state from *no-interaction* state to *interaction* state and vice-versa; 
- - Action: actions constitui
