@@ -119,29 +119,35 @@ To summarise:
 3. From ```split_kasteren_activity.csv``` and ```groundtruth.csv``` we extract a daily routine for each day of the week, assuming that it starts at 7:00:00 on the day at issue and ends at 06:59:59 on the next day; the resulting datasets can be found at ```dataset/training``` and ```dataset/groundtruth```, respectively.
 
 ## Petri Nets Discovering
-Petri nets are a graphical representation of a system that models the flow of data, events, or resources between different components or entities. Since the goal of this case study is detecting the weekly routine of a subject, Petri nets play a fundamental role to achieve it. 
-Specifically, we expect seven Petri nets, one for each day of the week.
+Petri nets are a graphical representation of a system that models the flow of data, events, or resources between different components or entities. 
+Since the goal of this case study is detecting the weekly routine of a subject, Petri nets play a fundamental role to achieve it. Specifically, we aim to obtain seven Petri nets, one for each day of the week.
 
 We can distinguish between two main phases:
-- training phase, during which we obtain seven Petri nets, each based on the respective train dataset;
+- training phase, during which we obtain the Petri nets, each based on the respective train dataset;
 - testing phase, during which we check the predictive performances of the previously obtained Petri nets.
 
 ### Training Phase
-In this phase, the pre-processed data is used to train Petri nets. This involves using algorithms to learn the structure and parameters of the model based on the observed behavior of the system.
+The pre-processed data is used to train the Petri nets. This involves using algorithms to learn the structure and parameters of the model based on the observed behavior of the system.
 
-In other words, for each day of the week, the respective dataset needs to be read into a pandas dataframe, which is an essential step in order to use the methods provided by PM4Py library. The following is a general exmaple of code.
+Specifically, for each day of the week, the training  involves the following steps:
+- the training dataset referring to the specific day needs to be read into a pandas dataframe, parsing the 'timestamp' column as dates;
 ```
 day_df = pd.read_csv("day.csv", parse_dates=["timestamp"])
-
+```
+- then, a new dataframe daydf is created with specific columns from day_df;
+```
 daydf = pd.DataFrame(monday_df, columns=['id', 'timestamp', 'date', 'time', 'sensor', 'action', 'event', 'pattern', 'activity'])
-
+```
+- we need to format daydf as a PM4Py Dataframe with 'timestamp' as the case ID, 'activity' as the activity key, and 'timestamp' as the timestamp key;
+```
 day_df = pm4py.format_dataframe(daydf, case_id='timestamp', activity_key='activity', timestamp_key='timestamp')
 ```
-
-Then, this dataframe needs to be converted into an event log, which is then used by the alpha miner algorithm to discover the Petri net.
+- the PM4Py dataframe is converted into an event log;
 ```
 event_log = pm4py.convert_to_event_log(monday_df)
-
+```
+- finally, the event log is used by the alpha miner algorithm to discover the Petri net.
+```
 net, initial_marking, final_marking = pm4py.discover_petri_net_alpha(event_log)
 ```
 
@@ -152,7 +158,6 @@ The testing phased involves to test the obtained Petri nets on the respective te
 
 
 ## Conclusions
-
 
 
 
