@@ -152,9 +152,10 @@ net, initial_marking, final_marking = pm4py.discover_petri_net_alpha(event_log)
 ```
 
 ### Testing Phase
-The testing phased involves to test the obtained Petri nets on the respective testing dataset in order to evalute their predictive performance, using the token-based replay fitness algorithm. Hence, this involves using the model to make predictions about the behavior of the system based on new data, and comparing the predicted behavior to the actual behavior observed in the new data.
+The testing phased involves to test the obtained Petri nets on the respective testing dataset in order to evalute their predictive performance, using the token-based replay fitness algorithm. The fitness score can provide insight into how well the discovered Petri net captures the behavior of the process data in the test dataset.
+Hence, this involves using the model to make predictions about the behavior of the system based on new data, and comparing the predicted behavior to the actual behavior observed in the new data.
 
-Specifically, for each day of the week, the testing  involves the following steps:
+Specifically, for each day of the week, the testing involves the following steps:
 - the testing dataset referring to the specific day needs to be read into a pandas dataframe, parsing the 'timestamp' column as dates
 ```
 day_df_test = pd.read_csv("day_truth.csv", parse_dates=["timestamp"])
@@ -177,7 +178,7 @@ fitness = pm4py.fitness_token_based_replay(event_log_test, net, initial_marking,
 ```
 
 ## Results
-The results obtained by executing the training and the testing phase are presented as follows.
+The results obtained by the training and the testing phase are presented as follows.
 
 ### Monday
 The Petri Net discovered by the alpha miner algorithm during the training phase is the following one.
@@ -190,7 +191,7 @@ The fitness of the discovered Petri net calculated during the testing phase is a
 
 ### Tuesday
 The Petri Net discovered by the alpha miner algorithm during the training phase is the following one.
-![alt text](https://github.com/Midorilly/Formal-Methods/blob/main/img/monday.png)
+![alt text](https://github.com/Midorilly/Formal-Methods/blob/main/img/tuesday.png)
 
 The fitness of the discovered Petri net calculated during the testing phase is as follows:
 ```
@@ -199,7 +200,7 @@ The fitness of the discovered Petri net calculated during the testing phase is a
 
 ### Wednesday
 The Petri Net discovered by the alpha miner algorithm during the training phase is the following one.
-![alt text](https://github.com/Midorilly/Formal-Methods/blob/main/img/monday.png)
+![alt text](https://github.com/Midorilly/Formal-Methods/blob/main/img/wednesday.png)
 
 The fitness of the discovered Petri net calculated during the testing phase is as follows:
 ```
@@ -208,7 +209,7 @@ The fitness of the discovered Petri net calculated during the testing phase is a
 
 ### Thursday
 The Petri Net discovered by the alpha miner algorithm during the training phase is the following one.
-![alt text](https://github.com/Midorilly/Formal-Methods/blob/main/img/monday.png)
+![alt text](https://github.com/Midorilly/Formal-Methods/blob/main/img/thursday.png)
 
 The fitness of the discovered Petri net calculated during the testing phase is as follows:
 ```
@@ -217,7 +218,7 @@ The fitness of the discovered Petri net calculated during the testing phase is a
 
 ### Friday
 The Petri Net discovered by the alpha miner algorithm during the training phase is the following one.
-![alt text](https://github.com/Midorilly/Formal-Methods/blob/main/img/monday.png)
+![alt text](https://github.com/Midorilly/Formal-Methods/blob/main/img/friday.png)
 
 The fitness of the discovered Petri net calculated during the testing phase is as follows:
 ```
@@ -226,7 +227,7 @@ The fitness of the discovered Petri net calculated during the testing phase is a
 
 ### Saturday
 The Petri Net discovered by the alpha miner algorithm during the training phase is the following one.
-![alt text](https://github.com/Midorilly/Formal-Methods/blob/main/img/monday.png)
+![alt text](https://github.com/Midorilly/Formal-Methods/blob/main/img/saturday.png)
 
 The fitness of the discovered Petri net calculated during the testing phase is as follows:
 ```
@@ -235,7 +236,7 @@ The fitness of the discovered Petri net calculated during the testing phase is a
 
 ### Sunday
 The Petri Net discovered by the alpha miner algorithm during the training phase is the following one.
-![alt text](https://github.com/Midorilly/Formal-Methods/blob/main/img/monday.png)
+![alt text](https://github.com/Midorilly/Formal-Methods/blob/main/img/sunday.png)
 
 The fitness of the discovered Petri net calculated during the testing phase is as follows:
 ```
@@ -243,7 +244,6 @@ The fitness of the discovered Petri net calculated during the testing phase is a
 ```
 
 ## Conclusions
+The case study aims to discover Petri nets from process data using PM4Py and then test the fitness of the discovered Petri nets on a separate test dataset.
 
-
-
-
+The results obtained are good: the fitness score shows that, for each day of the week, the discovered Petri net captures well the behaviour of the process data in the test dataset. The only exception is the Petri net referring to Friday, which has a low fitness percentage. However, in every other case, the fitness percentage is high; overall, it is between 80% and 98%. 
