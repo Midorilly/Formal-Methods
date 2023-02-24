@@ -1,7 +1,13 @@
-# Process Mining with Pm4Py
+# Process Mining with PM4Py
+```
+Eleonora Ghizzota, 774733
+Mariangela Panunzio, 789733
+Formal Methods in Computer Science, a.y. 2022-2023, DIB
+```
+
 Process mining is a set of techniques and tools to extract non-trivial and useful information from event logs. Specifically, information about processes is recorded by information systems, which include business processes, enterprise systems, automation and control systems, medical systems, daily activities, IoT devices, and social networks, among others.
-One of the main aspects of process mining is control-flow discovery: given an event log containing a set of traces, it involves automatically discovering and visualising the actual process performed by constructing a suitable process model. Hence, a good example of a process model are Petri nets. 
-Algorithms such as the α-algorithm construct a process model based on identifying characteristic patterns in the event log; an example of pattern is a situation in which one activity always follows another).
+One of the main aspects of process mining is control-flow discovery: given an event log containing a set of traces, it involves automatically discovering and visualising the actual process performed by constructing a suitable process model. Hence, a good example of a process model are Petri Nets. 
+Algorithms such as the α-algorithm construct a process model based on identifying characteristic patterns in the event log; an example of pattern is a situation in which one activity always follows another.
 
 This case study aims to detect the weekly routine of a traked subject based on the event log obtained by sesnors. Specifically, this goal has been achieved using [pm4py](https://pm4py.fit.fraunhofer.de/), an open-source Python library for process mining. PM4Py involves tools used for data preparation, process discovery, conformance checking, as well as performance analysis.
 
@@ -61,6 +67,9 @@ Since not every row contains more than one activity, their ```activity_2``` and 
 df = df.replace(np.nan, 'e')
 ```
 Now that ```activity_1```, ```activity_2``` and ```activity_3``` fields contain strings only, we can further split the activities. We create a new dataframe with a different header: every row can have one corresponding ```activity``` only; additionally, we split ```timeframe``` in two more fields, ```date``` and ```time```, too.
+```
+split_df = pd.DataFrame(columns = ['timestamp', 'date', 'time', 'sensor', 'action', 'event', 'pattern', 'activity'], index=range(0,23282))
+```
 
 The splitting algorithm is the following: 
 - if a row in the initial dataframe ```df``` has non-empty ```activity_3```, we replicate it thrice so that the ```activity``` field of the new dataframe ```split_df``` contains the values of ```activity_1```, ```activity_2``` and ```activity_3``` respectively;
@@ -73,19 +82,21 @@ split_df.to_csv('split_kasteren_activity.csv', header = ['timestamp', 'date', 't
 ```
 Below is an example of how a row having three activities has been split.
 
+**```dataset/split_kasteren.csv```**
+
 ```
 timestamp,date,time,sensor,action,event,pattern,activity_1,activity_2,activity_3
 2008-12-07 01:03:30,2008-12-07,01:03:30,ToiletDoorDownstairs,ToiletDoorDownstairs,ON,Pat_154,Relax,UseToiletDownstairs,LeaveHouse
 ```
 
-**split_df:**
+**```dataset/split_kasteren_activity.csv```**
 ```
 timestamp,date,time,sensor,action,event,pattern,activity
 2008-12-07 01:03:30,2008-12-07,01:03:30,ToiletDoorDownstairs,ToiletDoorDownstairs,ON,Pat_154,Relax
 2008-12-07 01:03:30,2008-12-07,01:03:30,ToiletDoorDownstairs,ToiletDoorDownstairs,ON,Pat_154,UseToiletDownstairs
 2008-12-07 01:03:30,2008-12-07,01:03:30,ToiletDoorDownstairs,ToiletDoorDownstairs,ON,Pat_154,LeaveHouse
 ```
-Our dataset is now ready for one last step; since we aim to model a Petri Network for each day of the week, we extract from the entire dataset seven subsets, one for each day of the week. As we mentioned earlier, these data have been gathered between November 19th and December 8th, 2008, thus we have
+Our dataset is now ready for one last step; since we aim to model a Petri Net for each day of the week, we extract from the entire dataset seven subsets, one for each day. As we mentioned earlier, these data have been gathered between November 19th and December 8th, 2008, thus we have
 - Mondays: 24-11, 01-12, 08-12
 - Tuesdays: 25-11, 02-12
 - Wednesdays: 19-11, 26-11, 03-12
@@ -111,23 +122,23 @@ for i in range(len(dataset)):
 ```
 By observing the code we understand that, for instance, the routine of Monday 24th starts on Monday 24th at 07:00:00, ```m24```, and ends on Tuesday 25th at 06:59:59, ```m25```. The same algorithm applies to the other days of the week. 
 
-We apply this process on the grountruth dataset, too. Our groundtruth dataset has been obtained by merging [```kasterenC_groundtruth.csv```](https://github.com/aitoralmeida/c4a_activity_recognition/blob/master/experiments/kasterenC_dataset/kasterenC_groundtruth.csv) and [```test_kasterenC.csv.annotated```](https://github.com/aitoralmeida/c4a_activity_recognition/blob/master/experiments/kasterenC_dataset/test_kasterenC.csv.annotated) so that its dataframe has the same header of the final training dataframe; it can be found at can be found at ```dataset/groundtruth/groundtruth.csv```.
+We apply this process on the grountruth dataset, too. Our groundtruth dataset has been obtained by merging [```kasterenC_groundtruth.csv```](https://github.com/aitoralmeida/c4a_activity_recognition/blob/master/experiments/kasterenC_dataset/kasterenC_groundtruth.csv) and [```test_kasterenC.csv.annotated```](https://github.com/aitoralmeida/c4a_activity_recognition/blob/master/experiments/kasterenC_dataset/test_kasterenC.csv.annotated) so that its dataframe has the same header of the final training dataframe; it can be found at ```dataset/groundtruth/groundtruth.csv```.
 
 To summarise:
 1. In ```split_kasteren.csv```, rows with field ```detected_activities``` containing more than one activity have been duplicated in order to split the activities one per row; this operation results in a new dataset, ```split_kasteren_activity.csv```;
 2. To obtain a groundtruth dataset consistent with the training set, ```kasterenC_groundtruth.csv``` and ```test_kasterenC.csv.annotated``` have been merged in ```groundtruth.csv```;
-3. From ```split_kasteren_activity.csv``` and ```groundtruth.csv``` we extract a daily routine for each day of the week, assuming that it starts at 7:00:00 on the day at issue and ends at 06:59:59 on the next day; the resulting datasets can be found at ```dataset/training``` and ```dataset/groundtruth```, respectively.
+3. From ```split_kasteren_activity.csv``` and ```groundtruth.csv``` we extract a daily routine for each day of the week separately, assuming that it starts at 7:00:00 on the day at issue and ends at 06:59:59 on the next day; the resulting datasets can be found at ```dataset/training``` and ```dataset/groundtruth```, respectively.
 
 ## Petri Nets Discovering
-Petri nets are a graphical representation of a system that models the flow of data, events, or resources between different components or entities. 
-Since the goal of this case study is detecting the weekly routine of a subject, Petri nets play a fundamental role to achieve it. Specifically, we aim to obtain seven Petri nets, one for each day of the week.
+Petri Nets are a graphical representation of a system that models the flow of data, events, or resources between different components or entities. 
+Since the goal of this case study is detecting the weekly routine of a subject, Petri Nets play a fundamental role to achieve it. Specifically, we aim to obtain seven Petri Nets, one for each day of the week.
 
 We can distinguish between two main phases:
-- training phase, during which we obtain the Petri nets, each based on the respective train dataset;
-- testing phase, during which we check the predictive performances of the previously obtained Petri nets.
+- training phase, during which we obtain the Petri Nets, each based on the respective train dataset;
+- testing phase, during which we check the predictive performances of the previously obtained Petri Nets.
 
-### Training Phase
-The pre-processed data is used to train the Petri nets. This involves using the alpha miner algorithm to learn the structure and parameters of the model based on the observed behavior of the system.
+### Training phase
+The pre-processed data described earlier are used to train the Petri Nets. This involves using the alpha miner algorithm to learn the structure and parameters of the model based on the observed behavior of the system.
 
 Specifically, for each day of the week, the training  involves the following steps:
 - the training dataset referring to the specific day needs to be read into a pandas dataframe, parsing the 'timestamp' column as dates
@@ -151,9 +162,9 @@ event_log = pm4py.convert_to_event_log(monday_df)
 net, initial_marking, final_marking = pm4py.discover_petri_net_alpha(event_log)
 ```
 
-### Testing Phase
-The testing phased involves to test the obtained Petri nets on the respective testing dataset in order to evalute their predictive performance, using the token-based replay fitness algorithm. The fitness score can provide insight into how well the discovered Petri net captures the behavior of the process data in the test dataset.
-Hence, this involves using the model to make predictions about the behavior of the system based on new data, and comparing the predicted behavior to the actual behavior observed in the new data.
+### Testing phase
+The testing phase involves to test the obtained Petri Nets on the respective testing dataset in order to evalute their predictive performance, using the token-based replay fitness algorithm. The fitness score can provide insight into how well the discovered Petri Net captures the behavior of the process data in the test dataset.
+Hence, this means using the model to make predictions about the behavior of the system based on new data, and comparing the predicted behavior to the actual behavior observed in the new data.
 
 Specifically, for each day of the week, the testing involves the following steps:
 - the testing dataset referring to the specific day needs to be read into a pandas dataframe, parsing the 'timestamp' column as dates
@@ -184,7 +195,7 @@ The results obtained by the training and the testing phase are presented as foll
 The Petri Net discovered by the alpha miner algorithm during the training phase is the following one.
 ![alt text](https://github.com/Midorilly/Formal-Methods/blob/main/img/monday.png)
 
-The fitness of the discovered Petri net calculated during the testing phase is as follows:
+The fitness of the discovered Petri Net calculated during the testing phase is the following:
 ```
 {'perc_fit_traces': 93.78468368479467, 'average_trace_fitness': 0.985238623751389, 'log_fitness': 0.9734003479605644, 'percentage_of_fitting_traces': 93.78468368479467}
 ```
@@ -193,7 +204,7 @@ The fitness of the discovered Petri net calculated during the testing phase is a
 The Petri Net discovered by the alpha miner algorithm during the training phase is the following one.
 ![alt text](https://github.com/Midorilly/Formal-Methods/blob/main/img/tuesday.png)
 
-The fitness of the discovered Petri net calculated during the testing phase is as follows:
+The fitness of the discovered Petri Net calculated during the testing phase is the following:
 ```
 {'perc_fit_traces': 90.81967213114754, 'average_trace_fitness': 0.9683840749414488, 'log_fitness': 0.965965032939984, 'percentage_of_fitting_traces': 90.81967213114754}
 ```
@@ -202,7 +213,7 @@ The fitness of the discovered Petri net calculated during the testing phase is a
 The Petri Net discovered by the alpha miner algorithm during the training phase is the following one.
 ![alt text](https://github.com/Midorilly/Formal-Methods/blob/main/img/wednesday.png)
 
-The fitness of the discovered Petri net calculated during the testing phase is as follows:
+The fitness of the discovered Petri Net calculated during the testing phase is the following:
 ```
 {'perc_fit_traces': 93.05153445280834, 'average_trace_fitness': 0.9759940165991138, 'log_fitness': 0.9617791250757319, 'percentage_of_fitting_traces': 93.05153445280834}
 ```
@@ -211,7 +222,7 @@ The fitness of the discovered Petri net calculated during the testing phase is a
 The Petri Net discovered by the alpha miner algorithm during the training phase is the following one.
 ![alt text](https://github.com/Midorilly/Formal-Methods/blob/main/img/thursday.png)
 
-The fitness of the discovered Petri net calculated during the testing phase is as follows:
+The fitness of the discovered Petri Net calculated during the testing phase is the following:
 ```
 {'perc_fit_traces': 79.12317327766179, 'average_trace_fitness': 0.9434237995824607, 'log_fitness': 0.9126899838969404, 'percentage_of_fitting_traces': 79.12317327766179}
 ```
@@ -220,7 +231,7 @@ The fitness of the discovered Petri net calculated during the testing phase is a
 The Petri Net discovered by the alpha miner algorithm during the training phase is the following one.
 ![alt text](https://github.com/Midorilly/Formal-Methods/blob/main/img/friday.png)
 
-The fitness of the discovered Petri net calculated during the testing phase is as follows:
+The fitness of the discovered Petri Net calculated during the testing phase is the following:
 ```
 {'perc_fit_traces': 18.779840848806366, 'average_trace_fitness': 0.8518213969938025, 'log_fitness': 0.8337065122007846, 'percentage_of_fitting_traces': 18.779840848806366}
 ```
@@ -229,7 +240,7 @@ The fitness of the discovered Petri net calculated during the testing phase is a
 The Petri Net discovered by the alpha miner algorithm during the training phase is the following one.
 ![alt text](https://github.com/Midorilly/Formal-Methods/blob/main/img/saturday.png)
 
-The fitness of the discovered Petri net calculated during the testing phase is as follows:
+The fitness of the discovered Petri Net calculated during the testing phase is the following:
 ```
 {'perc_fit_traces': 95.14699020065329, 'average_trace_fitness': 0.9835122102970915, 'log_fitness': 0.9790994564160266, 'percentage_of_fitting_traces': 95.14699020065329}
 ```
@@ -238,12 +249,12 @@ The fitness of the discovered Petri net calculated during the testing phase is a
 The Petri Net discovered by the alpha miner algorithm during the training phase is the following one.
 ![alt text](https://github.com/Midorilly/Formal-Methods/blob/main/img/sunday.png)
 
-The fitness of the discovered Petri net calculated during the testing phase is as follows:
+The fitness of the discovered Petri Net calculated during the testing phase is the following:
 ```
 {'perc_fit_traces': 94.84658416680793, 'average_trace_fitness': 0.9854777645928714, 'log_fitness': 0.9823693127242097, 'percentage_of_fitting_traces': 94.84658416680793}
 ```
 
 ## Conclusions
-The case study aims to discover Petri nets from process data using PM4Py and then test the fitness of the discovered Petri nets on a separate test dataset.
+The case study aims to discover Petri Nets from process data using PM4Py and then test the fitness of the discovered Petri Nets on a separate test dataset.
 
-The results obtained are good: the fitness score shows that, for each day of the week, the discovered Petri net captures well the behaviour of the process data in the test dataset. The only exception is the Petri net referring to Friday, which has a low fitness percentage. However, in every other case, the fitness percentage is high; overall, it is between 80% and 98%. 
+The results obtained are promising: the fitness score shows that, for each day of the week, the discovered Petri Net adequately captures the behaviour of the process data in the test dataset. The only exception is the Petri Net referring to Friday, which has a low fitness percentage. However, in every other case, the fitness percentage is high; overall, it is between 80% and 98%. 
