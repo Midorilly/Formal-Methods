@@ -92,7 +92,7 @@ Our dataset is now ready for one last step; since we aim to model a Petri Networ
 - Saturdays: 22-11, 29-11, 06-12
 - Sundays: 23-11, 30-11, 07-12
 
-We established that the daily routine starts at 7:00:00 of the day in question and ends at 6:59:59 of the next day. For example, here is how we extract the user's routine.
+We established that the daily routine starts at 7:00:00 of the day in question and ends at 6:59:59 of the next day. Here is how we extract the user's Monday routine.
 ```
 monday = pd.DataFrame(columns = ['timestamp', 'sensor', 'action', 'event', 'pattern', 'activity'], index=range(0,3695))
 m24 = pd.Timestamp('2008-11-24 07:00:00')
@@ -107,15 +107,22 @@ for i in range(len(dataset)):
         monday.iloc[m] = pd.Series({'timestamp': dataset.loc[i, 'timestamp'], 'sensor': dataset.loc[i, 'sensor'], 'action': dataset.loc[i, 'action'], 'event': dataset.loc[i, 'event'], 'pattern': dataset.loc[i, 'pattern'], 'activity': dataset.loc[i, 'activity']})
         m += 1
 ```
-By observing the code we understand that the *Mondays routine* starts on Monday 24th at 07:00:00 and ends on Tuesday 25th at 06:59:59.
+By observing the code we understand that, for instance, the routine of Monday 24th starts on Monday 24th at 07:00:00, ```m24```, and ends on Tuesday 25th at 06:59:59, ```m25```. The same algorithm applies to the other days of the week. 
+
+We apply this process on the grountruth dataset, too. Our groundtruth dataset has been obtained by merging [```kasterenC_groundtruth.csv```](https://github.com/aitoralmeida/c4a_activity_recognition/blob/master/experiments/kasterenC_dataset/kasterenC_groundtruth.csv) and [```test_kasterenC.csv.annotated```](https://github.com/aitoralmeida/c4a_activity_recognition/blob/master/experiments/kasterenC_dataset/test_kasterenC.csv.annotated) so that its dataframe has the same header of the final training dataframe; it can be found at can be found at ```dataset/groundtruth/groundtruth.csv```.
+
+To summarise:
+1. In ```split_kasteren.csv```, rows with field ```detected_activities``` containing more than one activity have been duplicated in order to split the activities one per row; this operation results in a new dataset, ```split_kasteren_activity.csv```;
+2. To obtain a groundtruth dataset consistent with the training set, ```kasterenC_groundtruth.csv``` and ```test_kasterenC.csv.annotated``` have been merged in ```groundtruth.csv```;
+3. From ```split_kasteren_activity.csv``` and ```groundtruth.csv``` we extract a daily routine for each day of the week, assuming that it starts at 7:00:00 on the day at issue and ends at 06:59:59 on the next day; the resulting datasets can be found at ```dataset/training``` and ```dataset/groundtruth```, respectively.
 
 ## Petri Nets Discovering
 Petri nets are a graphical representation of a system that models the flow of data, events, or resources between different components or entities. Since the goal of this case study is detecting the weekly routine of a subject, Petri nets play a fundamental role to achieve it. 
 Specifically, we expect seven Petri nets, one for each day of the week.
 
 We can distinguish between two main phases:
-    - training phase, during which we obtain seven Petri nets, each based on the respective train dataset;
-    - testing phase, during which we check the predictive performances of the previously obtained Petri nets.
+- training phase, during which we obtain seven Petri nets, each based on the respective train dataset;
+- testing phase, during which we check the predictive performances of the previously obtained Petri nets.
 
 ### Training Phase
 In this phase, the pre-processed data is used to train Petri nets. This involves using algorithms to learn the structure and parameters of the model based on the observed behavior of the system.
@@ -134,7 +141,6 @@ Then, this dataframe needs to be converted into an event log, which is then used
 event_log = pm4py.convert_to_event_log(monday_df)
 
 net, initial_marking, final_marking = pm4py.discover_petri_net_alpha(event_log)
-
 ```
 
 ### Testing Phase
