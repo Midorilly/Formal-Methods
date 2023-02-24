@@ -130,29 +130,51 @@ We can distinguish between two main phases:
 The pre-processed data is used to train the Petri nets. This involves using algorithms to learn the structure and parameters of the model based on the observed behavior of the system.
 
 Specifically, for each day of the week, the training  involves the following steps:
-- the training dataset referring to the specific day needs to be read into a pandas dataframe, parsing the 'timestamp' column as dates;
+- the training dataset referring to the specific day needs to be read into a pandas dataframe, parsing the 'timestamp' column as dates
 ```
 day_df = pd.read_csv("day.csv", parse_dates=["timestamp"])
 ```
-- then, a new dataframe daydf is created with specific columns from day_df;
+- then, a new dataframe ```daydf``` is created with specific columns from ```day_df```
 ```
 daydf = pd.DataFrame(monday_df, columns=['id', 'timestamp', 'date', 'time', 'sensor', 'action', 'event', 'pattern', 'activity'])
 ```
-- we need to format daydf as a PM4Py Dataframe with 'timestamp' as the case ID, 'activity' as the activity key, and 'timestamp' as the timestamp key;
+- we need to format ```daydf``` as a PM4Py Dataframe with ```timestamp``` as the case ID, ```activity``` as the activity key, and ```timestamp``` as the timestamp key
 ```
 day_df = pm4py.format_dataframe(daydf, case_id='timestamp', activity_key='activity', timestamp_key='timestamp')
 ```
-- the PM4Py dataframe is converted into an event log;
+- the PM4Py dataframe is converted into an event log
 ```
 event_log = pm4py.convert_to_event_log(monday_df)
 ```
-- finally, the event log is used by the alpha miner algorithm to discover the Petri net.
+- finally, the event log is used by the alpha miner algorithm to discover the Petri net
 ```
 net, initial_marking, final_marking = pm4py.discover_petri_net_alpha(event_log)
 ```
 
 ### Testing Phase
 The testing phased involves to test the obtained Petri nets on the respective testing dataset in order to evalute their predictive performance. Hence, this involves using the model to make predictions about the behavior of the system based on new data, and comparing the predicted behavior to the actual behavior observed in the new data.
+
+Specifically, for each day of the week, the testing  involves the following steps:
+- the testing dataset referring to the specific day needs to be read into a pandas dataframe, parsing the 'timestamp' column as dates
+```
+day_df_test = pd.read_csv("day_truth.csv", parse_dates=["timestamp"])
+```
+- then, a new dataframe ```daydf_test``` is created with specific columns from ```day_df_test```
+```
+daydf_test = pd.DataFrame(day_df_test, columns=['id', 'timestamp', 'sensor', 'action', 'event', 'pattern', 'activity'])
+```
+- we need to format ```daydf_test``` as a PM4Py Dataframe with ```timestamp``` as the case ID, ```activity``` as the activity key, and ```timestamp``` as the timestamp key
+```
+day_df_test = pm4py.format_dataframe(daydf_test, case_id='timestamp', activity_key='activity', timestamp_key='timestamp')
+```
+- the PM4Py dataframe is converted into an event log
+```
+event_log_test = pm4py.convert_to_event_log(day_df_test)
+```
+- finally, the token-based replay fitness algorithm is used to calculate the fitness of the discovered Petri net against the event log
+```
+fitness = pm4py.fitness_token_based_replay(event_log_test, net, initial_marking, final_marking)
+```
 
 ## Results
 
