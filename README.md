@@ -127,7 +127,7 @@ We can distinguish between two main phases:
 - testing phase, during which we check the predictive performances of the previously obtained Petri nets.
 
 ### Training Phase
-The pre-processed data is used to train the Petri nets. This involves using algorithms to learn the structure and parameters of the model based on the observed behavior of the system.
+The pre-processed data is used to train the Petri nets. This involves using the alpha miner algorithm to learn the structure and parameters of the model based on the observed behavior of the system.
 
 Specifically, for each day of the week, the training  involves the following steps:
 - the training dataset referring to the specific day needs to be read into a pandas dataframe, parsing the 'timestamp' column as dates
@@ -152,7 +152,7 @@ net, initial_marking, final_marking = pm4py.discover_petri_net_alpha(event_log)
 ```
 
 ### Testing Phase
-The testing phased involves to test the obtained Petri nets on the respective testing dataset in order to evalute their predictive performance. Hence, this involves using the model to make predictions about the behavior of the system based on new data, and comparing the predicted behavior to the actual behavior observed in the new data.
+The testing phased involves to test the obtained Petri nets on the respective testing dataset in order to evalute their predictive performance, using the token-based replay fitness algorithm. Hence, this involves using the model to make predictions about the behavior of the system based on new data, and comparing the predicted behavior to the actual behavior observed in the new data.
 
 Specifically, for each day of the week, the testing  involves the following steps:
 - the testing dataset referring to the specific day needs to be read into a pandas dataframe, parsing the 'timestamp' column as dates
@@ -177,6 +177,22 @@ fitness = pm4py.fitness_token_based_replay(event_log_test, net, initial_marking,
 ```
 
 ## Results
+The results obtained by executing the training and the testing phase are presented as follows.
+
+### Monday
+![alt text](https://github.com/Midorilly/Formal-Methods/blob/main/img/monday.png)
+
+### Tuesday
+
+### Wednesday
+
+### Thursday
+
+### Friday
+
+### Saturday
+
+### Sunday
 
 
 ## Conclusions
