@@ -51,9 +51,9 @@ timestamp,date,time,sensor,action,event,pattern,activity_1,activity_2,activity_3
 2008-11-19 22:59:12,2008-11-19,22:59:12,PlatesCupboard,PlatesCupboard,ON,Pat_158,UseToiletDownstairs,GetSnack,
 2008-11-19 22:59:53,2008-11-19,22:59:53,Fridge,Fridge,ON,Pat_38,GetSnack,,
 ```
-To further simplify the dataset we decided to keep only one activity per row. The code written for these accomodations can be found at ```src/pm.ipynb```. First and foremost, we read the ```split_kasteren.csv``` using the [pandas](https://pandas.pydata.org/) library. 
+To further simplify the dataset we decided to keep only one activity per row. The code written for these accomodations can be found at ```src/dataset_manipulation.ipynb```. First and foremost, we read the ```split_kasteren.csv``` using the [pandas](https://pandas.pydata.org/) library. 
 ```
-df = pd.read_csv("split_pm_output.csv", parse_dates=["timestamp"])
+df = pd.read_csv("Project/dataset/split_kasteren.csv", parse_dates=["timestamp"])
 ```
 Since not every row contains more than one activity, their ```activity_2``` and ```activity_3``` fields were automatically set to **NaN** by Microsoft Excel. In order to work with strings only, NaN values have been replaced with the character ```e```, indicating that the corresponding field is empty. 
 
@@ -61,15 +61,17 @@ Since not every row contains more than one activity, their ```activity_2``` and 
 df = df.replace(np.nan, 'e')
 ```
 Now that ```activity_1```, ```activity_2``` and ```activity_3``` fields contain strings only, we can further split the activities. We create a new dataframe with a different header: every row can have one corresponding ```activity``` only; additionally, we split ```timeframe``` in two more fields, ```date``` and ```time```, too.
-```
-split_df.to_csv('split_kasteren_activity.csv', header = ['timestamp', 'date', 'time', 'sensor', 'action', 'event', 'pattern', 'activity'])
-```
+
 The splitting algorithm is the following: 
 - if a row in the initial dataframe ```df``` has non-empty ```activity_3```, we replicate it thrice so that the ```activity``` field of the new dataframe ```split_df``` contains the values of ```activity_1```, ```activity_2``` and ```activity_3``` respectively;
 - if a row in ```df``` has non-empty ```activity_2``` and empty ```activity_3```, we add it to  ```split_df``` twice: the ```activity``` field contains the values of ```activity_1``` and ```activity_2```; similarly;
 - finally, if a ```df``` row has non-empty ```activity_1``` field only, it is straightaway duplicated in ```split_df```.
 
-We write this new dataframe to ```dataset/split_kasteren_activity.csv```. Below is an example of how a row having three activities has been split.
+We write this new dataframe to ```dataset/split_kasteren_activity.csv```.
+```
+split_df.to_csv('split_kasteren_activity.csv', header = ['timestamp', 'date', 'time', 'sensor', 'action', 'event', 'pattern', 'activity'])
+```
+Below is an example of how a row having three activities has been split.
 
 ```
 timestamp,date,time,sensor,action,event,pattern,activity_1,activity_2,activity_3
