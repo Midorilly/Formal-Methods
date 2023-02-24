@@ -180,20 +180,67 @@ fitness = pm4py.fitness_token_based_replay(event_log_test, net, initial_marking,
 The results obtained by executing the training and the testing phase are presented as follows.
 
 ### Monday
+The Petri Net discovered by the alpha miner algorithm during the training phase is the following one.
 ![alt text](https://github.com/Midorilly/Formal-Methods/blob/main/img/monday.png)
 
+The fitness of the discovered Petri net calculated during the testing phase is as follows:
+```
+{'perc_fit_traces': 93.78468368479467, 'average_trace_fitness': 0.985238623751389, 'log_fitness': 0.9734003479605644, 'percentage_of_fitting_traces': 93.78468368479467}
+```
+
 ### Tuesday
+The Petri Net discovered by the alpha miner algorithm during the training phase is the following one.
+![alt text](https://github.com/Midorilly/Formal-Methods/blob/main/img/monday.png)
+
+The fitness of the discovered Petri net calculated during the testing phase is as follows:
+```
+{'perc_fit_traces': 90.81967213114754, 'average_trace_fitness': 0.9683840749414488, 'log_fitness': 0.965965032939984, 'percentage_of_fitting_traces': 90.81967213114754}
+```
 
 ### Wednesday
+The Petri Net discovered by the alpha miner algorithm during the training phase is the following one.
+![alt text](https://github.com/Midorilly/Formal-Methods/blob/main/img/monday.png)
+
+The fitness of the discovered Petri net calculated during the testing phase is as follows:
+```
+{'perc_fit_traces': 93.05153445280834, 'average_trace_fitness': 0.9759940165991138, 'log_fitness': 0.9617791250757319, 'percentage_of_fitting_traces': 93.05153445280834}
+```
 
 ### Thursday
+The Petri Net discovered by the alpha miner algorithm during the training phase is the following one.
+![alt text](https://github.com/Midorilly/Formal-Methods/blob/main/img/monday.png)
+
+The fitness of the discovered Petri net calculated during the testing phase is as follows:
+```
+{'perc_fit_traces': 79.12317327766179, 'average_trace_fitness': 0.9434237995824607, 'log_fitness': 0.9126899838969404, 'percentage_of_fitting_traces': 79.12317327766179}
+```
 
 ### Friday
+The Petri Net discovered by the alpha miner algorithm during the training phase is the following one.
+![alt text](https://github.com/Midorilly/Formal-Methods/blob/main/img/monday.png)
+
+The fitness of the discovered Petri net calculated during the testing phase is as follows:
+```
+{'perc_fit_traces': 18.779840848806366, 'average_trace_fitness': 0.8518213969938025, 'log_fitness': 0.8337065122007846, 'percentage_of_fitting_traces': 18.779840848806366}
+```
 
 ### Saturday
+The Petri Net discovered by the alpha miner algorithm during the training phase is the following one.
+![alt text](https://github.com/Midorilly/Formal-Methods/blob/main/img/monday.png)
+
+The fitness of the discovered Petri net calculated during the testing phase is as follows:
+```
+{'perc_fit_traces': 95.14699020065329, 'average_trace_fitness': 0.9835122102970915, 'log_fitness': 0.9790994564160266, 'percentage_of_fitting_traces': 95.14699020065329}
+```
 
 ### Sunday
+The Petri Net discovered by the alpha miner algorithm during the training phase is the following one.
+![alt text](https://github.com/Midorilly/Formal-Methods/blob/main/img/monday.png)
 
+The fitness of the discovered Petri net calculated during the testing phase is as follows:
+```
+{'perc_fit_traces': 94.84658416680793, 'average_trace_fitness': 0.9854777645928714, 'log_fitness': 0.9823693127242097, 'percentage_of_fitting_traces': 94.84658416680793}
+```
 
 ## Conclusions
 
